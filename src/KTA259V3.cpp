@@ -5,7 +5,7 @@
 #include "KTA259V3.h"
 
 // Constructor
-KTA259V3::KTA259V3(uint8_t pin) : Max31855(pin) {
+KTA259V3::KTA259V3(uint8_t pin) : Max31855(pin, 0) { // 1x oversampling
 
 	// Set up multiplexer
 	pinMode(KTA259V3_PIN_A0, OUTPUT);
@@ -17,6 +17,10 @@ KTA259V3::KTA259V3(uint8_t pin) : Max31855(pin) {
 	digitalWrite(KTA259V3_PIN_A1, 0);
 	digitalWrite(KTA259V3_PIN_A2, 0);
 	digitalWrite(KTA259V3_PIN_EN, 0); // Multiplexer off on start up
+}
+
+void KTA259V3::set_oversampling(uint16_t samples) {
+	Max31855::set_oversampling( (samples-1) & 0xff );
 }
 
 // Select channel on multiplexer, channel 1 to 8 (not 0 to 7)
@@ -52,18 +56,18 @@ void KTA259V3::update(void) {
 
 // Select channel number and update reading
 void KTA259V3::update(uint8_t ch) {
-	select_channel(ch);
+	this->select_channel(ch);
 	delay(KTA259V3_MUX_WAIT);
 	Max31855::update();
 }
 
 // Return the info structure as-is (from last update)
 Max31855_Info KTA259V3::get_info(void) {
-	return Max31855::get_info();
+	return this->get_info();
 }
 
 // Take a new reading on selected channel and return the info structure
 Max31855_Info KTA259V3::get_info(uint8_t ch) {
-	update(ch);
-	return Max31855::get_info();
+	this->update(ch);
+	return this->get_info();
 }

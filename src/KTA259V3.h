@@ -25,9 +25,15 @@
 #define KTA259V3_PIN_EN 7
 
 class KTA259V3 : public Max31855 {
+	private:
+		uint8_t samples;
+
 	public:
 		/** Constructor */
 		KTA259V3(uint8_t pin);
+
+		/** Set amount of oversampling **/
+		void set_oversampling(uint16_t samples);
 
 		/** Select channel on MUX, use numbers 1 to 8 (not 0 to 7).
 		  * PCB is has channels 1 to 8 marked on it. User must wait
